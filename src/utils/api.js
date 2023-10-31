@@ -46,7 +46,7 @@ async function fetchJson(url, options, onCancel) {
 
 function populateReviews(signal) {
   return async (movie) => {
-    const url = `${API_BASE_URL}/movies/${movie.movie_id}/reviews`;
+    const url = new URL(`${API_BASE_URL}/movies/${movie.movie_id}/reviews`);
     movie.reviews = await fetchJson(url, { headers, signal }, []);
     return movie;
   };
@@ -54,7 +54,7 @@ function populateReviews(signal) {
 
 function populateTheaters(signal) {
   return async (movie) => {
-    const url = `${API_BASE_URL}/movies/${movie.movie_id}/theaters`;
+    const url = new URL(`${API_BASE_URL}/movies/${movie.movie_id}/theaters`);
     movie.theaters = await fetchJson(url, { headers, signal }, []);
     return movie;
   };
@@ -67,9 +67,8 @@ function populateTheaters(signal) {
  */
 export async function listMovies(signal) {
   const url = new URL(`${API_BASE_URL}/movies?is_showing=true`);
-  const addReviews = populateReviews(signal);
   return await fetchJson(url, { headers, signal }, []).then((movies) =>
-    Promise.all(movies.map(addReviews))
+    Promise.all(movies)
   );
 }
 
@@ -98,7 +97,7 @@ export async function readMovie(movieId, signal) {
 }
 
 export async function deleteReview(reviewId) {
-  const url = `${API_BASE_URL}/reviews/${reviewId}`;
+  const url = new URL(`${API_BASE_URL}/reviews/${reviewId}`);
   return await fetchJson(url, { method: "DELETE", headers }, {});
 }
 
